@@ -5,12 +5,16 @@ import Config
 # The MIX_TEST_PARTITION environment variable can be used
 # to provide built-in test partitioning in CI environment.
 # Run `mix help test` for more information.
-config :cumbuca, Cumbuca.Repo,
+repo_opts = [
   username: "zoedsoupe",
   hostname: "localhost",
   database: "cumbuca_test#{System.get_env("MIX_TEST_PARTITION")}",
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: 10
+]
+
+config :cumbuca, Cumbuca.Repo, repo_opts
+config :cumbuca, Cumbuca.Repo.Replica, [{:default_dynamic_repo, Cumbuca.Repo} | repo_opts]
 
 # We don't run a server during test. If one is required,
 # you can enable the server option below.

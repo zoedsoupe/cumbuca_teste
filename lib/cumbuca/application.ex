@@ -8,6 +8,7 @@ defmodule Cumbuca.Application do
     children = [
       CumbucaWeb.Telemetry,
       Cumbuca.Repo,
+      Cumbuca.Repo.Replica,
       {Phoenix.PubSub, name: Cumbuca.PubSub},
       CumbucaWeb.Endpoint
     ]
