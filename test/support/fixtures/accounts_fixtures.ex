@@ -9,6 +9,15 @@ defmodule Cumbuca.AccountsFixtures do
     })
   end
 
+  def bank_account_fixture(attrs \\ %{}, user_id) do
+    {:ok, bank_account} =
+      attrs
+      |> Map.put(:user_id, user_id)
+      |> Accounts.Repository.upsert_bank_account()
+
+    bank_account
+  end
+
   def user_fixture(attrs \\ %{}) do
     {:ok, user} =
       attrs
