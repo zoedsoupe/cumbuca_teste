@@ -3,6 +3,8 @@ defmodule Cumbuca.Auth.Models.UserTest do
 
   alias Cumbuca.Auth.Models.User
 
+  @moduletag :unit
+
   describe "changeset/2" do
     @invalid_params %{cpf: 123, first_name: nil, last_name: 123}
     @missing_required_params %{last_name: "dummy"}
