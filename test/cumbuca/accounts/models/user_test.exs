@@ -1,7 +1,7 @@
-defmodule Cumbuca.Auth.Models.UserTest do
+defmodule Cumbuca.Accounts.Models.UserTest do
   use Cumbuca.DataCase, async: true
 
-  alias Cumbuca.Auth.Models.User
+  alias Cumbuca.Accounts.Models.User
 
   @moduletag :unit
 

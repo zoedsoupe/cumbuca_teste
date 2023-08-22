@@ -1,5 +1,8 @@
 import Config
 
+config :money,
+  default_currency: :BRL
+
 config :cumbuca,
   ecto_repos: [Cumbuca.Repo]
 
