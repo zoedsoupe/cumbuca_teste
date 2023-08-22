@@ -1,15 +1,23 @@
 defmodule Cumbuca do
   @moduledoc false
 
+  defmodule ModelBehaviour do
+    @moduledoc "Simple module to define models behaviour"
+    @callback changeset(struct, map) :: Cumbuca.Repo.changeset()
+  end
+
+  defmodule SchemaBehaviour do
+    @moduledoc "Simple module to define schemas behaviour"
+    @callback parse!(map) :: struct
+  end
+
   def model do
     quote do
       use Ecto.Schema
       import Ecto.Changeset
       alias __MODULE__
 
-      @opaque changeset :: Ecto.Changeset.t()
-      @callback changeset(__MODULE__.t(), map) :: changeset
-      @behaviour __MODULE__
+      @behaviour Cumbuca.ModelBehaviour
     end
   end
 
@@ -19,8 +27,7 @@ defmodule Cumbuca do
       import Ecto.Changeset
       alias __MODULE__
 
-      @callback parse!(map) :: __MODULE__.t()
-      @behaviour __MODULE__
+      @behaviour Cumbuca.SchemaBehaviour
     end
   end
 

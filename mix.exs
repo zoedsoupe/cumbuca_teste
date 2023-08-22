@@ -35,6 +35,7 @@ defmodule Cumbuca.MixProject do
       {:jason, "~> 1.2"},
       {:bandit, ">= 0.7.7"},
       {:nanoid, "~> 2.1"},
+      {:brcpfcnpj, "~> 1.0.0"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
     ]
   end

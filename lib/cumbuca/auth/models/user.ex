@@ -30,6 +30,7 @@ defmodule Cumbuca.Auth.Models.User do
   def changeset(%User{} = user, attrs) do
     user
     |> cast(attrs, [:last_name | @required_fields])
+    |> Brcpfcnpj.Changeset.validate_cpf(:cpf)
     |> validate_required(@required_fields)
   end
 end

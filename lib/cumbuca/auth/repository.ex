@@ -4,9 +4,8 @@ defmodule Cumbuca.Auth.Repository do
   use Cumbuca, :repository
 
   alias Cumbuca.Auth.Models.User
-  alias Cumbuca.Auth.RepositoryBehaviour
 
-  @behaviour RepositoryBehaviour
+  @behaviour Cumbuca.Auth.RepositoryBehaviour
 
   @impl true
   def fetch_user(id) do
