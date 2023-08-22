@@ -6,6 +6,8 @@ defmodule Cumbuca.Accounts.UserAccountAdapterTest do
   alias Cumbuca.Accounts.Schemas.UserAccount
   alias Cumbuca.Accounts.UserAccountAdapter
 
+  @moduletag :unit
+
   describe "internal_to_external/1" do
     setup do
       user = user_fixture()

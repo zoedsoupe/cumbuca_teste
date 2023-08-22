@@ -1,4 +1,6 @@
 defmodule Cumbuca.AccountsFixtures do
+  @moduledoc "Fixture for models from Accounts context"
+
   alias Cumbuca.Accounts
 
   def valid_user_attributes(attrs \\ %{}) do
