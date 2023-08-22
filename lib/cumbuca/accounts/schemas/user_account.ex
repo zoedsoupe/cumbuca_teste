@@ -8,7 +8,7 @@ defmodule Cumbuca.Accounts.Schemas.UserAccount do
   @derive Jason.Encoder
   @primary_key false
   embedded_schema do
-    field :balance, :integer
+    field :balance, :string
     field :identifier, :string
     field :owner_cpf, :string
     field :owner_first_name, :string

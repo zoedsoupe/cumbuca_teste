@@ -13,7 +13,7 @@ defmodule Cumbuca.Accounts.UserAccountAdapter do
   @spec internal_to_external(internal_user_account) :: UserAccount.t()
   def internal_to_external(%{user: user, bank_account: bank_account}) do
     UserAccount.parse!(%{
-      balance: bank_account.balance,
+      balance: Money.to_string(bank_account.balance),
       identifier: bank_account.identifier,
       owner_cpf: user.cpf,
       owner_first_name: user.first_name,

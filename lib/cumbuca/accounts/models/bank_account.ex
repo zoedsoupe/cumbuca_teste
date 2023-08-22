@@ -15,7 +15,7 @@ defmodule Cumbuca.Accounts.Models.BankAccount do
         }
 
   schema "bank_account" do
-    field :balance, :integer, default: 0
+    field :balance, Money.Ecto.Map.Type, default: Money.new(0, :BRL)
     field :identifier, Cumbuca.Ecto.Type.UniqueID, autogenerate: true
 
     belongs_to :user, User

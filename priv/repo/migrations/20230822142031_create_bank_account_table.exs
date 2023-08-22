@@ -4,7 +4,7 @@ defmodule Cumbuca.Repo.Migrations.CreateBankAccountTable do
   def change do
     create table(:bank_account) do
       add(:identifier, :string, null: false)
-      add(:balance, :bigint, null: false)
+      add(:balance, :map, null: false)
       add(:user_id, references(:user, on_delete: :nothing), null: false)
 
       timestamps()
