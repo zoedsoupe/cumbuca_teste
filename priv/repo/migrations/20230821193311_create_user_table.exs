@@ -12,5 +12,7 @@ defmodule Cumbuca.Repo.Migrations.CreateUserTable do
 
       timestamps()
     end
+
+    create unique_index(:user, [:cpf])
   end
 end
