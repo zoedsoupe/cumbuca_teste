@@ -3,7 +3,7 @@ defmodule Cumbuca.Accounts.Models.BankAccount do
 
   use Cumbuca, :model
 
-  alias Cumbuca.Auth.Models.User
+  alias Cumbuca.Accounts.Models.User
 
   @type t :: %BankAccount{
           id: integer,

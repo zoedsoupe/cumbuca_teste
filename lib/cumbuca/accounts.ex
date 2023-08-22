@@ -5,7 +5,7 @@ defmodule Cumbuca.Accounts do
   alias Cumbuca.Accounts.UserAccountAdapter
   alias Cumbuca.Repo
 
-  @opaque cpf :: String.t()
+  @opaque public_id :: String.t()
 
   @spec register_user_account(map) ::
           {:ok, UserAccount.t()} | {:error, Repo.changeset()}
@@ -16,7 +16,10 @@ defmodule Cumbuca.Accounts do
     end
   end
 
-  @spec retrieve_user_account(cpf) :: {:ok, UserAccount.t()} | {:error, :not_found}
-  def retrieve_user_account(cpf) do
+  @spec retrieve_user_account(public_id) :: {:ok, UserAccount.t()} | {:error, :not_found}
+  def retrieve_user_account(account_ident) do
+    with {:ok, models} <- Repository.fetch_bank_account(account_ident) do
+      {:ok, UserAccountAdapter.internal_to_external(models)}
+    end
   end
 end

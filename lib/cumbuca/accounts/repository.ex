@@ -40,7 +40,12 @@ defmodule Cumbuca.Accounts.Repository do
 
   @impl true
   def fetch_bank_account(ident) do
-    Repo.fetch_by(BankAccount, identifier: ident)
+    Repo.fetch(
+      from b in BankAccount,
+        where: b.identifier == ^ident,
+        join: u in assoc(b, :user),
+        select: %{user: u, bank_account: b}
+    )
   end
 
   @impl true
