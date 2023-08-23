@@ -31,7 +31,8 @@ defmodule Cumbuca.Transactions.ConsumerTest do
   end
 
   defp notify_consumer(pid, event) do
-    Ecto.Adapters.SQL.Sandbox.allow(Cumbuca.Repo, self(), pid)
+    alias Ecto.Adapters.SQL.Sandbox
+    Sandbox.allow(Cumbuca.Repo, self(), pid)
     raw_event = Jason.encode!(%{payload: event})
     notification = {:notification, "pid", "ref", "process_transaction", raw_event}
     Process.send(pid, notification, [])

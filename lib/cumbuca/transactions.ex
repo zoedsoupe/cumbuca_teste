@@ -3,8 +3,8 @@ defmodule Cumbuca.Transactions do
 
   alias Cumbuca.Accounts
   alias Cumbuca.Transactions.Repository
-  alias Cumbuca.Transactions.TransactionAdapter
   alias Cumbuca.Transactions.TransactEvent
+  alias Cumbuca.Transactions.TransactionAdapter
   alias Cumbuca.Transactions.TransactionLogic
 
   require Logger

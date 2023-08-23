@@ -4,8 +4,8 @@ defmodule Cumbuca.Transactions.TransactionAdapterTest do
   import Cumbuca.AccountsFixtures
   import Cumbuca.TransactionsFixtures
 
-  alias Cumbuca.Transactions.TransactionAdapter
   alias Cumbuca.Transactions.Schemas.AccountTransaction
+  alias Cumbuca.Transactions.TransactionAdapter
 
   @moduletag :unit
 
