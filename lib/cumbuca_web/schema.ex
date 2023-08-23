@@ -4,6 +4,7 @@ defmodule CumbucaWeb.Schema do
   use Absinthe.Schema
 
   alias CumbucaWeb.Middlewares
+  alias CumbucaWeb.Resolvers
 
   scalar :naive_datetime, name: "NaiveDateTime" do
     serialize(&NaiveDateTime.to_iso8601/1)
@@ -39,7 +40,7 @@ defmodule CumbucaWeb.Schema do
   query do
     field :check_balance, :string do
       middleware(Middlewares.EnsureAuthentication)
-      resolve(&CumbucaWeb.Resolvers.Accounts.check_balance/3)
+      resolve(&Resolvers.Accounts.check_balance/3)
     end
 
     field :transactions, list_of(:transaction) do
@@ -47,7 +48,7 @@ defmodule CumbucaWeb.Schema do
       arg(:to_period, :naive_datetime)
 
       middleware(Middlewares.EnsureAuthentication)
-      resolve(&CumbucaWeb.Resolvers.Transactions.list/2)
+      resolve(&Resolvers.Transactions.list/2)
     end
   end
 
@@ -63,21 +64,44 @@ defmodule CumbucaWeb.Schema do
     field :balance, :integer
   end
 
+  input_object :transact_input do
+    field :amount, non_null(:integer)
+    field :receiver, non_null(:string)
+  end
+
   object :login_response do
     field :token, :string
   end
 
+  object :transaction_process_response do
+    field :identifier, :string
+  end
+
   mutation do
+    field :transact, :transaction_process_response do
+      arg(:input, :transact_input)
+      middleware(Middlewares.EnsureAuthentication)
+      resolve(&Resolvers.Transactions.transact/2)
+    end
+
     field :register_account, :user_account do
       arg(:input, :registration_input)
 
-      resolve(&CumbucaWeb.Resolvers.Accounts.register_account/2)
+      resolve(&Resolvers.Accounts.register_account/2)
     end
 
     field :login, :login_response do
       arg(:input, :login_input)
 
-      resolve(&CumbucaWeb.Resolvers.Accounts.login/2)
+      resolve(&Resolvers.Accounts.login/2)
+    end
+  end
+
+  subscription do
+    field :transaction_processed, :transaction do
+      config(fn _args, _info -> {:ok, topic: "*"} end)
+      middleware(Middlewares.EnsureAuthentication)
+      resolve(&Resolvers.Transactions.transaction_processed/3)
     end
   end
 

@@ -1,5 +1,6 @@
 defmodule CumbucaWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :cumbuca
+  use Absinthe.Phoenix.Endpoint
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
@@ -16,7 +17,7 @@ defmodule CumbucaWeb.Endpoint do
     pass: ["*/*"],
     json_decoder: Phoenix.json_library()
 
-  plug CumbucaWeb.Context
+  socket "/socket", CumbucaWeb.Socket, websocket: true, longpoll: false
 
-  plug Absinthe.Plug, schema: CumbucaWeb.Schema
+  plug CumbucaWeb.Router
 end
