@@ -58,7 +58,7 @@ defmodule Cumbuca.Transactions do
       {:error, :already_chargebacked} ->
         transaction
         |> transaction_already_chargebacked_message()
-        |> Logger.info()
+        |> Logger.error()
     end
   end
 
@@ -115,11 +115,11 @@ defmodule Cumbuca.Transactions do
   end
 
   defp transaction_validation_error_message(event, error) do
-    "[#{__MODULE__}] ==> Transaction #{inspect(event)} failed with: #{error}"
+    "[#{__MODULE__}] ==> Transaction #{Jason.encode!(event)} failed with: #{error}"
   end
 
   defp account_does_not_exists_error_message(event) do
-    "[#{__MODULE__}] ==> Transaction #{inspect(event)} failed because one of accounts does not exist"
+    "[#{__MODULE__}] ==> Transaction #{Jason.encode!(event)} failed because one of accounts does not exist"
   end
 
   defp transaction_process_scheduled_message(identifier) do
@@ -127,10 +127,10 @@ defmodule Cumbuca.Transactions do
   end
 
   defp transfer_error_message(event) do
-    "[#{__MODULE__}] ==> Transaction #{inspect(event)} failed transfer between accounts"
+    "[#{__MODULE__}] ==> Transaction #{Jason.encode!(event)} failed transfer between accounts"
   end
 
   defp transaction_already_chargebacked_message(transaction) do
-    "[#{__MODULE__}] ==> Transacition #{inspect(transaction)} was already chargebacked"
+    "[#{__MODULE__}] ==> Transaction #{transaction.identifier} was already chargebacked"
   end
 end
