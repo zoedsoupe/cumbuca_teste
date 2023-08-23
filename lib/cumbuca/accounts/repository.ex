@@ -8,6 +8,18 @@ defmodule Cumbuca.Accounts.Repository do
 
   @behaviour Cumbuca.Accounts.RepositoryBehaviour
 
+  @impl true
+  def update_accounts_balance_transaction(sender, receiver, sender_attrs, receiver_attrs) do
+    Repo.transaction(fn ->
+      with {:ok, _} <- upsert_bank_account(sender, sender_attrs),
+           {:ok, _} <- upsert_bank_account(receiver, receiver_attrs) do
+        :done
+      else
+        {:error, changeset} -> Repo.rollback(changeset)
+      end
+    end)
+  end
+
   @spec create_user_account_transaction(map) :: {:ok, map} | {:error, Repo.changeset()}
   def create_user_account_transaction(params) do
     Repo.transaction(fn ->

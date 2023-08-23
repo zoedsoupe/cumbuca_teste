@@ -16,4 +16,10 @@ defmodule Cumbuca.Accounts.RepositoryBehaviour do
             when ident: String.t()
   @callback upsert_bank_account(BankAccount.t(), map) ::
               {:ok, BankAccount.t()} | {:error, :not_found}
+  @callback update_accounts_balance_transaction(sender, receiver, sender_attrs, receiver_attrs) ::
+              :ok | :error
+            when sender: BankAccount.t(),
+                 receiver: BankAccount.t(),
+                 sender_attrs: map,
+                 receiver_attrs: map
 end
