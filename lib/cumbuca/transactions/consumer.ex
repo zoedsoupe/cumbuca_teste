@@ -3,6 +3,7 @@ defmodule Cumbuca.Transactions.Consumer do
 
   use GenServer
 
+  alias Cumbuca.Transactions
   alias Cumbuca.Transactions.TransactEventAdapter
 
   require Logger
@@ -11,6 +12,11 @@ defmodule Cumbuca.Transactions.Consumer do
 
   def start_link(opts) do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
+  end
+
+  @spec chargeback_transaction(String.t()) :: :ok
+  def chargeback_transaction(identifier) do
+    GenServer.cast(__MODULE__, {:chargeback_transaction, %{transaction_identifier: identifier}})
   end
 
   @impl true
@@ -23,9 +29,13 @@ defmodule Cumbuca.Transactions.Consumer do
   end
 
   @impl true
-  def handle_cast({:process_transaction, event}, state) do
-    Cumbuca.Transactions.transact!(event)
-    {:noreply, state}
+  def handle_cast({:chargeback_transaction, %{transaction_identifier: identifier}}, _state) do
+    case Transactions.fetch_transaction(identifier) do
+      {:ok, transaction} -> Transactions.chargeback!(transaction)
+      _ -> Transactions.transaction_does_not_exist_log(identifier)
+    end
+
+    {:noreply, :processing}
   end
 
   @impl true
