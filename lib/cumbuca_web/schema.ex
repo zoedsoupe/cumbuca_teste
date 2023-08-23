@@ -3,6 +3,8 @@ defmodule CumbucaWeb.Schema do
 
   use Absinthe.Schema
 
+  alias CumbucaWeb.Middlewares
+
   scalar :naive_datetime, name: "NaiveDateTime" do
     serialize(&NaiveDateTime.to_iso8601/1)
     parse(&parse_naive_date_time/1)
@@ -35,10 +37,16 @@ defmodule CumbucaWeb.Schema do
   end
 
   query do
+    field :check_balance, :string do
+      middleware(Middlewares.EnsureAuthentication)
+      resolve(&CumbucaWeb.Resolvers.Accounts.check_balance/3)
+    end
+
     field :transactions, list_of(:transaction) do
       arg(:from_period, :naive_datetime)
       arg(:to_period, :naive_datetime)
 
+      middleware(Middlewares.EnsureAuthentication)
       resolve(&CumbucaWeb.Resolvers.Transactions.list/2)
     end
   end
@@ -48,11 +56,24 @@ defmodule CumbucaWeb.Schema do
     field :account_identifier, :string
   end
 
+  input_object :registration_input do
+    field :cpf, non_null(:string)
+    field :first_name, non_null(:string)
+    field :last_name, :string
+    field :balance, :integer
+  end
+
   object :login_response do
     field :token, :string
   end
 
   mutation do
+    field :register_account, :user_account do
+      arg(:input, :registration_input)
+
+      resolve(&CumbucaWeb.Resolvers.Accounts.register_account/2)
+    end
+
     field :login, :login_response do
       arg(:input, :login_input)
 
@@ -60,9 +81,7 @@ defmodule CumbucaWeb.Schema do
     end
   end
 
-  alias CumbucaWeb.Middlewares
-
   def middleware(middleware, _field, _object) do
-    middleware ++ [Middlewares.EnsureAuthentication, Middlewares.ErrorHandler]
+    middleware ++ [Middlewares.ErrorHandler]
   end
 end

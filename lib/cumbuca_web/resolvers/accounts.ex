@@ -15,4 +15,14 @@ defmodule CumbucaWeb.Resolvers.Accounts do
         error
     end
   end
+
+  def register_account(%{input: input}, _resolution) do
+    Accounts.register_user_account(input)
+  end
+
+  def check_balance(_args, _resolution, %{context: %{current_user: user}}) do
+    with {:ok, account} <- Accounts.retrieve_user_account(user.bank_account.identifier) do
+      {:ok, account.balance}
+    end
+  end
 end

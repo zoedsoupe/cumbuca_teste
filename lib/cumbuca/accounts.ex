@@ -11,7 +11,10 @@ defmodule Cumbuca.Accounts do
   @spec register_user_account(map) ::
           {:ok, UserAccount.t()} | {:error, Repo.changeset()}
   def register_user_account(params) do
-    case Repository.create_user_account_transaction(params) do
+    params
+    |> Map.update(:balance, params[:balance], &Money.new/1)
+    |> Repository.create_user_account_transaction()
+    |> case do
       {:ok, models} -> {:ok, UserAccountAdapter.internal_to_external(models)}
       {:error, changeset} -> {:error, changeset}
     end
