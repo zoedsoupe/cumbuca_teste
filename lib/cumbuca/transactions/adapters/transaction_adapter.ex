@@ -22,4 +22,14 @@ defmodule Cumbuca.Transactions.TransactionAdapter do
       receiver: receiver
     })
   end
+
+  @spec external_to_new_internal(Cumbuca.Transactions.transact_params()) :: map
+  def external_to_new_internal(params) do
+    %{
+      type: :transfer,
+      amount: Money.new(params[:amount]),
+      sender_id: params[:sender],
+      receiver_id: params[:receiver]
+    }
+  end
 end
