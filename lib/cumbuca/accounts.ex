@@ -31,6 +31,11 @@ defmodule Cumbuca.Accounts do
     end
   end
 
+  @spec retrieve_user(public_id) :: {:ok, User.t()} | {:error, :not_found}
+  def retrieve_user(user_ident) do
+    Repository.fetch_user_by_public_id(user_ident)
+  end
+
   @spec transfer_amount_between_accounts(BankAccount.t(), BankAccount.t(), Money.t()) ::
           {:ok, :done} | :error
   def transfer_amount_between_accounts(sender, receiver, amount) do

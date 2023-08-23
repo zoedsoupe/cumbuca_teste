@@ -40,7 +40,9 @@ defmodule Cumbuca.Accounts.Repository do
 
   @impl true
   def fetch_user_by_public_id(public_id) do
-    Repo.fetch_by(User, public_id: public_id)
+    query = from u in User, where: u.public_id == ^public_id, select: u, preload: [:bank_account]
+
+    if user = Repo.one(query), do: {:ok, user}, else: {:error, :not_found}
   end
 
   @impl true

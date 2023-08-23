@@ -1,24 +1,6 @@
 defmodule CumbucaWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :cumbuca
 
-  # The session will be stored in the cookie and signed,
-  # this means its contents can be read but not tampered with.
-  # Set :encryption_salt if you would also like to encrypt it.
-  @session_options [
-    store: :cookie,
-    key: "_cumbuca_key",
-    signing_salt: "mR5OPjuK",
-    same_site: "Lax"
-  ]
-
-  # You should set gzip to true if you are running phx.digest
-  # when deploying your static files in production.
-  plug Plug.Static,
-    at: "/",
-    from: :cumbuca,
-    gzip: true,
-    only: CumbucaWeb.static_paths()
-
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
   if code_reloading? do
@@ -34,8 +16,5 @@ defmodule CumbucaWeb.Endpoint do
     pass: ["*/*"],
     json_decoder: Phoenix.json_library()
 
-  plug Plug.MethodOverride
-  plug Plug.Head
-  plug Plug.Session, @session_options
-  plug CumbucaWeb.Router
+  plug Absinthe.Plug, schema: CumbucaWeb.Schema
 end
