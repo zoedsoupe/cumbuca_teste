@@ -10,9 +10,7 @@ defmodule Cumbuca.Transactions.TransactionLogicTest do
   describe "validate_transaction/3" do
     setup do
       sender = bank_account_fixture(%{balance: Money.new(100)}, user_fixture().id)
-
-      receiver =
-        bank_account_fixture(%{balance: Money.new(100)}, user_fixture(%{cpf: "74057038876"}).id)
+      receiver = bank_account_fixture(%{balance: Money.new(100)}, user_fixture().id)
 
       %{sender: sender, receiver: receiver}
     end

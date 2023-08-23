@@ -29,10 +29,10 @@ defmodule Cumbuca.Transactions.Consumer do
   end
 
   @impl true
-  def handle_info({:notification, _pid, _ref, "process_transaction", raw}, state) do
+  def handle_info({:notification, _pid, _ref, "process_transaction", raw}, _) do
     payload = Jason.decode!(raw)
     event = TransactEventAdapter.external_to_internal(payload["payload"])
-    GenServer.cast(__MODULE__, {:process_transaction, event})
-    {:noreply, state}
+    Cumbuca.Transactions.transact!(event)
+    {:noreply, :processing}
   end
 end
