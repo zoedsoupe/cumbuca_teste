@@ -5,7 +5,7 @@ defmodule Cumbuca.AccountsFixtures do
 
   def valid_user_attributes(attrs \\ %{}) do
     Enum.into(attrs, %{
-      cpf: "90318175037",
+      cpf: Brcpfcnpj.cpf_generate(),
       first_name: "dummy",
       last_name: "last"
     })

@@ -11,5 +11,6 @@ defmodule Cumbuca.Repo.Migrations.CreateBankAccountTable do
     end
 
     create(index(:bank_account, [:user_id]))
+    create unique_index(:bank_account, [:identifier])
   end
 end
