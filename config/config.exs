@@ -1,6 +1,6 @@
 import Config
 
-config :cumbuca, postgres_events: ~w(process_transaction)
+config :cumbuca, postgres_events: ~w(process_transaction), config_env: config_env()
 
 config :money,
   default_currency: :BRL

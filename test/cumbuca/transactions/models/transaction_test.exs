@@ -18,7 +18,7 @@ defmodule Cumbuca.Transactions.Models.TransactionTest do
 
     setup do
       sender = bank_account_fixture(user_fixture().id)
-      receiver = bank_account_fixture(user_fixture(%{cpf: "74057038876"}).id)
+      receiver = bank_account_fixture(user_fixture().id)
 
       valid_transaction =
         transaction_fixture(sender.identifier, receiver.identifier, %{amount: Money.new(100)})

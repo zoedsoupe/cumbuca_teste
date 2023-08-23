@@ -7,6 +7,7 @@ defmodule Cumbuca.Repo.Migrations.CreateTransactionTable do
       add(:identifier, :string, null: false)
       add(:processed_at, :naive_datetime)
       add(:chargebacked_at, :naive_datetime)
+      add :status, :string, null: false
 
       add(
         :sender_id,

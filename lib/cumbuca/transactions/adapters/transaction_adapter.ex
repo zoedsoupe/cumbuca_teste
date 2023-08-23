@@ -31,12 +31,17 @@ defmodule Cumbuca.Transactions.TransactionAdapter do
     })
   end
 
-  @spec external_to_internal(Cumbuca.Transactions.transact_params()) :: map
+  @spec external_to_internal(Cumbuca.Transactions.transact_params()) ::
+          {:ok, Transaction.t()} | {:error, Cumbuca.Repo.changeset()}
   def external_to_internal(params) do
-    %{
+    params = %{
       amount: Money.new(params[:amount]),
       sender_id: params[:sender],
       receiver_id: params[:receiver]
     }
+
+    %Transaction{}
+    |> Transaction.changeset(params)
+    |> Ecto.Changeset.apply_action(:parse)
   end
 end

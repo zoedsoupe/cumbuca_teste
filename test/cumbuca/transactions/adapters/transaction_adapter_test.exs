@@ -19,7 +19,7 @@ defmodule Cumbuca.Transactions.TransactionAdapterTest do
     test "should return an AccountTransaction on valid params" do
       sender_user = user_fixture()
       sender = bank_account_fixture(sender_user.id)
-      receiver_user = user_fixture(%{cpf: "74057038876"})
+      receiver_user = user_fixture()
       receiver = bank_account_fixture(receiver_user.id)
 
       transaction =
@@ -47,28 +47,30 @@ defmodule Cumbuca.Transactions.TransactionAdapterTest do
   end
 
   describe "external_to_internal/1" do
-    test "should raise on empty amount param" do
+    test "should raise on nil amount" do
       assert_raise FunctionClauseError, fn ->
-        TransactionAdapter.external_to_internal(%{amount: nil})
+        TransactionAdapter.external_to_internal(%{
+          sender: "sender_id",
+          receiver: "receiver_id",
+          amount: nil
+        })
       end
     end
 
-    test "should return a map with empty values on missing fields" do
+    test "should return a Transaction struct on valid params" do
       amount = Money.new(100)
 
-      assert %{sender_id: nil, receiver_id: nil, amount: ^amount} =
-               TransactionAdapter.external_to_internal(%{amount: 100})
-    end
-
-    test "should return a correct map on valid params" do
-      amount = Money.new(100)
-
-      assert %{sender_id: "sender_id", receiver_id: "receiver_id", amount: ^amount} =
+      assert {:ok, transaction} =
                TransactionAdapter.external_to_internal(%{
                  sender: "sender_id",
                  receiver: "receiver_id",
                  amount: 100
                })
+
+      assert transaction.sender_id == "sender_id"
+      assert transaction.receiver_id == "receiver_id"
+      assert transaction.amount == amount
+      refute transaction.processed_at
     end
   end
 end
