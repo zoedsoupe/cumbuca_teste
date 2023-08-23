@@ -79,9 +79,15 @@ defmodule CumbucaWeb.Schema do
 
   mutation do
     field :transact, :transaction_process_response do
-      arg(:input, :transact_input)
+      arg(:input, non_null(:transact_input))
       middleware(Middlewares.EnsureAuthentication)
       resolve(&Resolvers.Transactions.transact/2)
+    end
+
+    field :chargeback_transaction, :transaction_process_response do
+      arg(:identifier, non_null(:string))
+      middleware(Middlewares.EnsureAuthentication)
+      resolve(&Resolvers.Transactions.chargeback_transaction/2)
     end
 
     field :register_account, :user_account do
@@ -99,6 +105,12 @@ defmodule CumbucaWeb.Schema do
 
   subscription do
     field :transaction_processed, :transaction do
+      config(fn _args, _info -> {:ok, topic: "*"} end)
+      middleware(Middlewares.EnsureAuthentication)
+      resolve(&Resolvers.Transactions.transaction_processed/3)
+    end
+
+    field :transaction_chargebacked, :transaction do
       config(fn _args, _info -> {:ok, topic: "*"} end)
       middleware(Middlewares.EnsureAuthentication)
       resolve(&Resolvers.Transactions.transaction_processed/3)

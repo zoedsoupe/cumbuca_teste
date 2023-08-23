@@ -6,7 +6,6 @@ defmodule Cumbuca.Transactions.Poller do
   alias Cumbuca.Transactions
   alias Cumbuca.Transactions.Models.Transaction
   alias Cumbuca.Transactions.TransactEvent
-  alias Cumbuca.Transactions.TransactionAdapter
 
   def start_link(opts) do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
@@ -30,11 +29,11 @@ defmodule Cumbuca.Transactions.Poller do
 
   @impl true
   def handle_info(%Transaction{} = transaction, state) do
-    account_transaction = TransactionAdapter.internal_to_external(transaction)
-
-    Absinthe.Subscription.publish(CumbucaWeb.Endpoint, account_transaction,
-      transaction_chargebacked: "*"
-    )
+    with {:ok, account_transaction} <- Transactions.retrieve_transaction(transaction.identifier) do
+      Absinthe.Subscription.publish(CumbucaWeb.Endpoint, account_transaction,
+        transaction_chargebacked: "*"
+      )
+    end
 
     {:noreply, state}
   end
