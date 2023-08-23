@@ -15,6 +15,14 @@ defmodule Cumbuca.Transactions do
 
   defdelegate fetch_transaction(ident), to: Repository
 
+  @spec list_transactions(NaiveDateTime.t(), NaiveDateTime.t()) :: [Transaction.t()]
+  def list_transactions(from, to) do
+    Enum.map(
+      Repository.list_transactions_by_period(from, to),
+      &TransactionAdapter.internal_to_external/1
+    )
+  end
+
   @spec schedule_new_transaction(transact_params) :: :ok
   def schedule_new_transaction(params) do
     with {:ok, struct} <- TransactionAdapter.external_to_internal(params),

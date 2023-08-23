@@ -25,11 +25,18 @@ defmodule Cumbuca.Transactions.TransactionAdapter do
 
     AccountTransaction.parse!(%{
       amount: Money.to_string(transaction.amount),
-      processed_at: NaiveDateTime.to_iso8601(transaction.processed_at),
+      processed_at: maybe_naive_date_time(transaction.processed_at),
+      chargebacked_at: maybe_naive_date_time(transaction.chargebacked_at),
       sender: UserAccountAdapter.internal_to_external(sender),
       receiver: UserAccountAdapter.internal_to_external(receiver)
     })
   end
+
+  defp maybe_naive_date_time(%NaiveDateTime{} = naive) do
+    NaiveDateTime.to_iso8601(naive)
+  end
+
+  defp maybe_naive_date_time(nil), do: nil
 
   @spec external_to_internal(Cumbuca.Transactions.transact_params()) ::
           {:ok, Transaction.t()} | {:error, Cumbuca.Repo.changeset()}

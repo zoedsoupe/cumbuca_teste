@@ -16,5 +16,7 @@ defmodule CumbucaWeb.Endpoint do
     pass: ["*/*"],
     json_decoder: Phoenix.json_library()
 
+  plug CumbucaWeb.Context
+
   plug Absinthe.Plug, schema: CumbucaWeb.Schema
 end

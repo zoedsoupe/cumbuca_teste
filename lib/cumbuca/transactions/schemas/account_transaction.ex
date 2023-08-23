@@ -17,6 +17,7 @@ defmodule Cumbuca.Transactions.Schemas.AccountTransaction do
   embedded_schema do
     field :amount, :string
     field :processed_at, :string
+    field :chargebacked_at, :string
 
     embeds_one :sender, UserAccount
     embeds_one :receiver, UserAccount
@@ -25,7 +26,7 @@ defmodule Cumbuca.Transactions.Schemas.AccountTransaction do
   @impl true
   def parse!(params) do
     %AccountTransaction{}
-    |> cast(params, [:amount, :processed_at])
+    |> cast(params, [:amount, :processed_at, :chargebacked_at])
     |> put_embed(:sender, params[:sender], required: true)
     |> put_embed(:receiver, params[:receiver], required: true)
     |> apply_action!(:parse)
