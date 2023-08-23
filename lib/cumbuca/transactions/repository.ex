@@ -18,9 +18,15 @@ defmodule Cumbuca.Transactions.Repository do
       from t in Transaction,
         join: s in assoc(t, :sender),
         join: r in assoc(t, :receiver),
+        join: su in assoc(s, :user),
+        join: ru in assoc(r, :user),
         where: t.processed_at >= ^from,
         where: t.processed_at <= ^to,
-        select: %{transaction: t, sender: s, receiver: r}
+        select: %{
+          transaction: t,
+          sender: %{user: su, bank_account: s},
+          receiver: %{user: ru, bank_account: r}
+        }
     )
   end
 

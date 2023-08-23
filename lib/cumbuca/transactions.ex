@@ -15,7 +15,7 @@ defmodule Cumbuca.Transactions do
   def schedule_new_transaction(params) do
     with {:ok, transaction} <-
            params
-           |> TransactionAdapter.external_to_new_internal()
+           |> TransactionAdapter.external_to_internal()
            |> Repository.upsert_transaction() do
       Logger.info("[#{__MODULE__}] ==> Transaction scheduled: #{transaction.identifier}")
     end

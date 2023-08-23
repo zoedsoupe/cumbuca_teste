@@ -26,12 +26,8 @@ defmodule Cumbuca.Transactions.Schemas.AccountTransaction do
   def parse!(params) do
     %AccountTransaction{}
     |> cast(params, [:amount, :processed_at])
-    |> cast_assoc(:sender, required: true, with: &cast_user_account/2)
-    |> cast_assoc(:sender, required: true, with: &cast_user_account/2)
+    |> put_embed(:sender, params[:sender], required: true)
+    |> put_embed(:receiver, params[:receiver], required: true)
     |> apply_action!(:parse)
-  end
-
-  defp cast_user_account(_struct, params) do
-    UserAccount.parse!(params)
   end
 end

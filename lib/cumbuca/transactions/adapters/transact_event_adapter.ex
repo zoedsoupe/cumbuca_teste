@@ -6,7 +6,6 @@ defmodule Cumbuca.Transactions.TransactEventAdapter do
   @spec external_to_internal(map) :: TransactEvent.t()
   def external_to_internal(params) do
     TransactEvent.parse!(%{
-      type: params["type"],
       sender_identifier: params["sender_id"],
       receiver_identifier: params["receiver_id"],
       amount: params["amount"],
