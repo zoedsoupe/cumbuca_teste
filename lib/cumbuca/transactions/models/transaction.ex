@@ -8,6 +8,7 @@ defmodule Cumbuca.Transactions.Models.Transaction do
   @type t :: %__MODULE__{
           id: integer(),
           amount: Money.t(),
+          identifier: String.t(),
           processed_at: NaiveDateTime.t(),
           sender: BankAccount.t(),
           receiver: BankAccount.t(),
@@ -18,9 +19,10 @@ defmodule Cumbuca.Transactions.Models.Transaction do
   schema "transaction" do
     field :amount, Money.Ecto.Map.Type
     field :processed_at, :naive_datetime
+    field :identifier, Cumbuca.Ecto.Type.UniqueID, autogenerate: true
 
-    belongs_to :sender, BankAccount
-    belongs_to :receiver, BankAccount
+    belongs_to :sender, BankAccount, references: :identifier, type: :string
+    belongs_to :receiver, BankAccount, references: :identifier, type: :string
 
     timestamps()
   end
