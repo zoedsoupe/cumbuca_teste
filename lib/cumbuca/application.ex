@@ -10,7 +10,8 @@ defmodule Cumbuca.Application do
       Cumbuca.Repo,
       Cumbuca.Repo.Replica,
       {Phoenix.PubSub, name: Cumbuca.PubSub},
-      CumbucaWeb.Endpoint
+      CumbucaWeb.Endpoint,
+      Cumbuca.Transactions.Consumer
     ]
 
     opts = [strategy: :one_for_one, name: Cumbuca.Supervisor]
