@@ -30,6 +30,14 @@ defmodule Cumbuca.Repo do
       {:ok, pid, ref}
     end
   end
+
+  def default_dynamic_repo do
+    if Application.get_env(:cumbuca, :config_env) == :test do
+      Cumbuca.Repo
+    else
+      Cumbuca.Repo.Replica
+    end
+  end
 end
 
 defmodule Cumbuca.Repo.Replica do
@@ -37,6 +45,5 @@ defmodule Cumbuca.Repo.Replica do
     otp_app: :cumbuca,
     adapter: Ecto.Adapters.Postgres,
     read_only: true,
-    default_dynamic_repo:
-      Application.compile_env!(:cumbuca, [Cumbuca.Repo.Replica, :default_dynamic_repo])
+    default_dynamic_repo: Cumbuca.Repo.default_dynamic_repo()
 end

@@ -42,7 +42,8 @@ defmodule Cumbuca.Accounts.Repository do
   def fetch_user_by_cpf_and_public_id(cpf, public_id) do
     query =
       from u in User,
-        where: u.public_id == ^public_id,
+        join: b in assoc(u, :bank_account),
+        where: b.identifier == ^public_id,
         where: u.cpf == ^cpf
 
     if user = Repo.one(query), do: {:ok, user}, else: {:error, :not_found}

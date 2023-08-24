@@ -11,7 +11,7 @@ repo_opts = [
 
 # Configure your database
 config :cumbuca, Cumbuca.Repo, repo_opts
-config :cumbuca, Cumbuca.Repo.Replica, [{:default_dynamic_repo, Cumbuca.Repo.Replica} | repo_opts]
+config :cumbuca, Cumbuca.Repo.Replica, repo_opts
 
 config :cumbuca, CumbucaWeb.Endpoint,
   http: [ip: {0, 0, 0, 0}, port: 4000],

@@ -22,7 +22,7 @@
             gcc
             openssl
             zlib
-            elixir_1_15
+            elixir_1_14
             darwin.apple_sdk.frameworks.CoreServices
             darwin.apple_sdk.frameworks.CoreFoundation
           ];

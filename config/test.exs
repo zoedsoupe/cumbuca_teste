@@ -14,7 +14,7 @@ repo_opts = [
 ]
 
 config :cumbuca, Cumbuca.Repo, repo_opts
-config :cumbuca, Cumbuca.Repo.Replica, [{:default_dynamic_repo, Cumbuca.Repo} | repo_opts]
+config :cumbuca, Cumbuca.Repo.Replica, repo_opts
 
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
