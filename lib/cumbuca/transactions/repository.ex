@@ -9,7 +9,24 @@ defmodule Cumbuca.Transactions.Repository do
 
   @impl true
   def fetch_transaction(ident) do
-    Repo.fetch_by(Transaction, identifier: ident)
+    query =
+      from t in Transaction,
+        join: s in assoc(t, :sender),
+        join: r in assoc(t, :receiver),
+        join: su in assoc(s, :user),
+        join: ru in assoc(r, :user),
+        where: t.identifier == ^ident,
+        select: %{
+          transaction: t,
+          sender: %{user: su, bank_account: s},
+          receiver: %{user: ru, bank_account: r}
+        }
+
+    if transaction = Repo.one(query) do
+      {:ok, transaction}
+    else
+      {:error, :not_found}
+    end
   end
 
   @impl true

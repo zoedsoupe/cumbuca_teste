@@ -10,6 +10,8 @@ defmodule Cumbuca.Accounts.RepositoryBehaviour do
   @callback fetch_user(Repo.id()) :: {:ok, User.t()} | {:error, :not_found}
   @callback fetch_user_by_public_id(id) :: {:ok, User.t()} | {:error, :not_found}
             when id: String.t()
+  @callback fetch_user_by_cpf_and_public_id(String.t(), String.t()) ::
+              {:ok, User.t()} | {:error, :not_found}
   @callback upsert_user(User.t(), map) :: Repo.changeset()
 
   @callback fetch_bank_account(ident) :: {:ok, BankAccount.t()} | {:error, :not_found}

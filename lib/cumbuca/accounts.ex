@@ -11,7 +11,10 @@ defmodule Cumbuca.Accounts do
   @spec register_user_account(map) ::
           {:ok, UserAccount.t()} | {:error, Repo.changeset()}
   def register_user_account(params) do
-    case Repository.create_user_account_transaction(params) do
+    params
+    |> Map.update(:balance, params[:balance], &Money.new/1)
+    |> Repository.create_user_account_transaction()
+    |> case do
       {:ok, models} -> {:ok, UserAccountAdapter.internal_to_external(models)}
       {:error, changeset} -> {:error, changeset}
     end
@@ -29,6 +32,17 @@ defmodule Cumbuca.Accounts do
     with {:ok, user_account} <- Repository.fetch_bank_account(account_ident) do
       {:ok, user_account.bank_account}
     end
+  end
+
+  @spec retrieve_user(public_id) :: {:ok, User.t()} | {:error, :not_found}
+  def retrieve_user(user_ident) do
+    Repository.fetch_user_by_public_id(user_ident)
+  end
+
+  @spec retrieve_user_by_cpf_and_identifier(String.t(), public_id) ::
+          {:ok, User.t()} | {:error, :not_found}
+  def retrieve_user_by_cpf_and_identifier(cpf, user_ident) do
+    Repository.fetch_user_by_cpf_and_public_id(cpf, user_ident)
   end
 
   @spec transfer_amount_between_accounts(BankAccount.t(), BankAccount.t(), Money.t()) ::

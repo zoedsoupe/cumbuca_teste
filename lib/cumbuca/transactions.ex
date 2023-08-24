@@ -5,6 +5,7 @@ defmodule Cumbuca.Transactions do
   alias Cumbuca.Transactions.Consumer
   alias Cumbuca.Transactions.Models.Transaction
   alias Cumbuca.Transactions.Repository
+  alias Cumbuca.Transactions.Schemas.AccountTransaction
   alias Cumbuca.Transactions.TransactEvent
   alias Cumbuca.Transactions.TransactionAdapter
   alias Cumbuca.Transactions.TransactionLogic
@@ -13,15 +14,36 @@ defmodule Cumbuca.Transactions do
 
   @opaque transact_params :: %{sender: String.t(), receiver: String.t(), amount: integer}
 
-  defdelegate fetch_transaction(ident), to: Repository
+  def fetch_transaction(ident) do
+    with {:ok, data} <- Repository.fetch_transaction(ident) do
+      {:ok, data.transaction}
+    end
+  end
 
-  @spec schedule_new_transaction(transact_params) :: :ok
+  @spec retrieve_transaction(String.t()) :: {:ok, AccountTransaction.t()} | {:error, :not_found}
+  def retrieve_transaction(ident) do
+    with {:ok, data} <- Repository.fetch_transaction(ident) do
+      {:ok, TransactionAdapter.internal_to_external(data)}
+    end
+  end
+
+  @spec list_transactions(NaiveDateTime.t(), NaiveDateTime.t()) :: [Transaction.t()]
+  def list_transactions(from, to) do
+    Enum.map(
+      Repository.list_transactions_by_period(from, to),
+      &TransactionAdapter.internal_to_external/1
+    )
+  end
+
+  @spec schedule_new_transaction(transact_params) :: {:ok, String.t()}
   def schedule_new_transaction(params) do
     with {:ok, struct} <- TransactionAdapter.external_to_internal(params),
          {:ok, transaction} <- Repository.upsert_transaction(Map.from_struct(struct)) do
       transaction.identifier
       |> transaction_process_scheduled_message()
       |> Logger.info()
+
+      {:ok, transaction.identifier}
     end
   end
 
@@ -41,8 +63,9 @@ defmodule Cumbuca.Transactions do
          {:ok, receiver} <- Accounts.retrieve_bank_account(transaction.receiver_id),
          {:ok, :done} <-
            Accounts.transfer_amount_between_accounts(receiver, sender, transaction.amount),
-         {:ok, _transaction} <-
+         {:ok, transaction} <-
            Repository.upsert_transaction(transaction, %{chargebacked_at: NaiveDateTime.utc_now()}) do
+      Phoenix.PubSub.broadcast(Cumbuca.PubSub, "transaction:chargebacked", transaction)
       :ok
     else
       :error ->
@@ -69,6 +92,7 @@ defmodule Cumbuca.Transactions do
          {:ok, :done} <-
            Accounts.transfer_amount_between_accounts(sender, receiver, event.amount),
          {:ok, _transaction} <- set_transaction_processed(event) do
+      Phoenix.PubSub.broadcast(Cumbuca.PubSub, "transaction:processed", event)
       :ok
     else
       :error ->
@@ -100,13 +124,13 @@ defmodule Cumbuca.Transactions do
   end
 
   defp set_transaction_failed(%TransactEvent{} = event) do
-    with {:ok, transaction} <- Repository.fetch_transaction(event.transaction_identifier) do
+    with {:ok, transaction} <- fetch_transaction(event.transaction_identifier) do
       Repository.upsert_transaction(transaction, %{status: :failed})
     end
   end
 
   defp set_transaction_processed(%TransactEvent{} = event) do
-    with {:ok, transaction} <- Repository.fetch_transaction(event.transaction_identifier) do
+    with {:ok, transaction} <- fetch_transaction(event.transaction_identifier) do
       Repository.upsert_transaction(transaction, %{
         status: :success,
         processed_at: NaiveDateTime.utc_now()

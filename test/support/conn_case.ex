@@ -35,4 +35,17 @@ defmodule CumbucaWeb.ConnCase do
     Cumbuca.DataCase.setup_sandbox(tags)
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
+
+  def register_and_generate_jwt_token(%{conn: conn}) do
+    import Cumbuca.AccountsFixtures
+    user = user_fixture()
+    account = bank_account_fixture(user.id)
+    token = Phoenix.Token.sign(CumbucaWeb.Endpoint, "user authentication", user.public_id)
+
+    %{
+      conn: Plug.Conn.put_req_header(conn, "authorization", "Bearer " <> token),
+      user: user,
+      account: account
+    }
+  end
 end

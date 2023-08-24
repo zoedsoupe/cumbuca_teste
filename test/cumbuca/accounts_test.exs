@@ -26,12 +26,11 @@ defmodule Cumbuca.AccountsTest do
 
   describe "register_user_account/1" do
     @invalid_user_params %{cpf: 123, first_name: nil}
-    @invalid_bank_account_params %{balance: "1123", cpf: "32731996102", first_name: "Dummy"}
     @valid_params %{
       cpf: "32731996102",
       first_name: "Dummy",
       last_name: "User",
-      balance: Money.new(1000)
+      balance: 1000
     }
 
     test "should return an error changeset on invalid user params" do
@@ -41,21 +40,13 @@ defmodule Cumbuca.AccountsTest do
       assert errors_on(changeset)[:first_name]
     end
 
-    test "should return an error changeset on invalid bank_account params" do
-      assert {:error, changeset} = Accounts.register_user_account(@invalid_bank_account_params)
-      refute changeset.valid?
-      refute errors_on(changeset)[:cpf]
-      refute errors_on(changeset)[:first_name]
-      assert errors_on(changeset)[:balance]
-    end
-
     test "should return an user_account on valid params" do
       assert {:ok, user_account} = Accounts.register_user_account(@valid_params)
       assert user_account.identifier
       assert user_account.owner_cpf == @valid_params.cpf
       assert user_account.owner_first_name == @valid_params.first_name
       assert user_account.owner_last_name == @valid_params.last_name
-      assert user_account.balance == Money.to_string(@valid_params.balance)
+      assert user_account.balance == Money.to_string(Money.new(@valid_params.balance))
     end
   end
 end

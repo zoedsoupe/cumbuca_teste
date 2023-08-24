@@ -37,6 +37,9 @@ defmodule Cumbuca.MixProject do
       {:nanoid, "~> 2.1"},
       {:brcpfcnpj, "~> 1.0.0"},
       {:money, "~> 1.12"},
+      {:absinthe, "~> 1.7"},
+      {:absinthe_plug, "~> 1.5"},
+      {:absinthe_phoenix, "~> 2.0"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
     ]
   end
